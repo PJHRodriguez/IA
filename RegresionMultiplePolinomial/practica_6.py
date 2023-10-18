@@ -25,6 +25,7 @@ X2_train = X2_train.reset_index(drop=True)
 Y_train = Y_train.reset_index(drop=True)
 learning_rate = 0.00001
 num_iteraciones = 100
+list_mse=[]
 
 def regresion_polinomica_descenso_gradiente(X1, X2, Y, learning_rate, num_iteraciones):
     n = len(X1)
@@ -39,6 +40,9 @@ def regresion_polinomica_descenso_gradiente(X1, X2, Y, learning_rate, num_iterac
         b3 -= (learning_rate / n) * sum((Y_pred[i] - Y[i]) * X1[i]**2 for i in range(n))
         b4 -= (learning_rate / n) * sum((Y_pred[i] - Y[i]) * X2[i]**2 for i in range(n))
         b5 -= (learning_rate / n) * sum((Y_pred[i] - Y[i]) * X1[i] * X2[i] for i in range(n))
+        
+        mse = calcular_mse(Y_test, Y_pred)
+        list_mse.append(mse)
     
     return b0, b1, b2, b3, b4, b5
 
@@ -83,9 +87,16 @@ print(f"Error cuadrático medio (MSE): {mse}")
 
 
 plt.figure(figsize=(10, 6))
+plt.subplot(1,2,1)
 plt.plot(range(len(Y_pred)),Y_pred, label='Prediccion' ,color="red")
 plt.scatter(range(len(Y_test)),Y_test, label='Datos reales' ,color="blue")
 plt.xlabel('Iteraciones')
 plt.ylabel('Peso')
+plt.legend()
+
+plt.subplot(1,2,2)
+plt.plot(range(len(list_mse)),list_mse, label='MSE' ,color="green")
+plt.xlabel('Iteraciones')
+plt.ylabel('MSE')
 plt.legend()
 plt.show()
