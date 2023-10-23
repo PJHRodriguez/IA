@@ -1,4 +1,3 @@
-#Pablo Hernandez Jesus Maldonado
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -6,13 +5,13 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score
 
 # Función sigmoide
-def sigmoid(z):
+def sigmoide(z):
     return 1 / (1 + np.exp(-z))
 
 # Función de costo 
-def compute_cost(X, y, theta):
+def f_costos(X, y, theta):
     m = len(y)
-    h = sigmoid(X @ theta)
+    h = sigmoide(X @ theta)
     costo = (-1/m) * np.sum(y * np.log(h) + (1-y) * np.log(1-h))
     return costo
 
@@ -22,10 +21,10 @@ def gradient_descent(X, y, theta, alpha, num_iterations):
     costos = []
 
     for _ in range(num_iterations):
-        h = sigmoid(X @ theta)
-        gradient = (1/m) * X.T @ (h - y)
-        theta -= alpha * gradient
-        costo = compute_cost(X, y, theta)
+        h = sigmoide(X @ theta)
+        gradiente = (1/m) * X.T @ (h - y)
+        theta -= alpha * gradiente
+        costo = f_costos(X, y, theta)
         costos.append(costo)
 
     return theta, costos
@@ -40,17 +39,17 @@ genero = set(data["Gender"])
 espera = set(data["EverBenched"])
 
 
-for category in educacion:
-    one_hot[f"Education_{category}"] = (data["Education"] == category).astype(int)
+for categoria in educacion:
+    one_hot[f"Education_{categoria}"] = (data["Education"] == categoria).astype(int)
 
-for category in ciudad:
-    one_hot[f"City_{category}"] = (data["City"] == category).astype(int)
+for categoria in ciudad:
+    one_hot[f"City_{categoria}"] = (data["City"] == categoria).astype(int)
 
-for category in genero:
-    one_hot[f"Gender_{category}"] = (data["Gender"] == category).astype(int)
+for categoria in genero:
+    one_hot[f"Gender_{categoria}"] = (data["Gender"] == categoria).astype(int)
 
-for category in espera:
-    one_hot[f"EverBenched_{category}"] = (data["EverBenched"] == category).astype(int)
+for categoria in espera:
+    one_hot[f"EverBenched_{categoria}"] = (data["EverBenched"] == categoria).astype(int)
 
 columnas = ["Education", "City", "Gender", "EverBenched"]
 data = data.drop(columnas, axis=1)
@@ -77,23 +76,23 @@ iteraciones = 160
 
 
 theta, costos = gradient_descent(X_train, Y_train, theta, alpha, iteraciones)
-predi_Y = sigmoid(X_test @ theta)
+predi_Y = sigmoide(X_test @ theta)
 
 #Metricas de validacion
 Y_pred = (predi_Y >= 0.5).astype(int)
 threshold = 0.5
-predicted_labels = (predi_Y > threshold).astype(int)
-true_positive = sum((predicted_labels == 1) & (Y_test == 1))
-false_positive = sum((predicted_labels == 1) & (Y_test == 0))
-true_negative = sum((predicted_labels == 0) & (Y_test == 0))
-false_negative = sum((predicted_labels == 0) & (Y_test == 1))
-accuracy = accuracy_score(Y_test, Y_pred)
+p = (predi_Y > threshold).astype(int)
+verdaderoPositivo = sum((p == 1) & (Y_test == 1))
+falsoPositivo = sum((p == 1) & (Y_test == 0))
+verdaderoNegativo = sum((p == 0) & (Y_test == 0))
+falsoNegativo = sum((p == 0) & (Y_test == 1))
+precision = accuracy_score(Y_test, Y_pred)
 print("Matriz de Confusión:")
-print("Verdaderos Positivos:", true_positive)
-print("Falsos Positivos:", false_positive)
-print("Verdaderos Negativos:", true_negative)
-print("Falsos Negativos:", false_negative)
-print("Precisión :", accuracy)
+print("Verdaderos Positivos:", verdaderoPositivo)
+print("Falsos Positivos:", falsoPositivo)
+print("Verdaderos Negativos:", verdaderoNegativo)
+print("Falsos Negativos:", falsoNegativo)
+print("Precisión :", precision)
 
 #Grafica
 plt.scatter(range(len(predi_Y)), predi_Y, c=Y_test, cmap='coolwarm')
