@@ -1,3 +1,5 @@
+#Pablo Jesus Hernandez Rodriguez
+#Jesus Alejandro Maldonado Jara
 import numpy as np
 
 def sigmoide(x):
